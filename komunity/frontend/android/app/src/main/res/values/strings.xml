@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Komunity</string>
+    <string name="title_activity_main">Komunity</string>
+    <string name="package_name">com.komunity.app</string>
+    <string name="custom_url_scheme">com.komunity.app</string>
+</resources>

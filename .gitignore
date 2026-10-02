@@ -1,0 +1,27 @@
+# Dependencies (restore with `npm install` in backend/ and frontend/)
+node_modules/
+
+# Build output (regenerate with `npm run build`)
+dist/
+
+# Local environment files (copy backend/.env.example -> backend/.env)
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS / editor clutter
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Test coverage
+coverage/

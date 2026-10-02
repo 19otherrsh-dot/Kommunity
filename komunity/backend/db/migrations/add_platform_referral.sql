@@ -1,0 +1,1 @@
+ALTER TABLE users ADD COLUMN referred_by_id UUID REFERENCES users(id) ON DELETE SET NULL;

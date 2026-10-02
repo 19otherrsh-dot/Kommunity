@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --scrollbar-color: #2a2a35;
+    /* Default theme (Indigo) */
+    --color-brand-50:  240 244 255;
+    --color-brand-100: 224 233 255;
+    --color-brand-200: 199 215 254;
+    --color-brand-300: 165 185 252;
+    --color-brand-400: 129 145 248;
+    --color-brand-500: 99 102 241;
+    --color-brand-600: 79 70 229;
+    --color-brand-700: 64 56 202;
+    --color-brand-800: 55 48 163;
+    --color-brand-900: 49 46 129;
+  }
+
+  .theme-rose {
+    --color-brand-50:  255 241 242;
+    --color-brand-100: 255 228 230;
+    --color-brand-200: 254 205 211;
+    --color-brand-300: 253 164 175;
+    --color-brand-400: 251 113 133;
+    --color-brand-500: 244 63 94;
+    --color-brand-600: 225 29 72;
+    --color-brand-700: 190 18 60;
+    --color-brand-800: 159 18 57;
+    --color-brand-900: 136 19 55;
+  }
+
+  .theme-emerald {
+    --color-brand-50:  236 253 245;
+    --color-brand-100: 209 250 229;
+    --color-brand-200: 167 243 208;
+    --color-brand-300: 110 231 183;
+    --color-brand-400: 52 211 153;
+    --color-brand-500: 16 185 129;
+    --color-brand-600: 5 150 105;
+    --color-brand-700: 4 120 87;
+    --color-brand-800: 6 95 70;
+    --color-brand-900: 6 78 59;
+  }
+
+  .theme-amber {
+    --color-brand-50:  255 251 235;
+    --color-brand-100: 254 243 199;
+    --color-brand-200: 253 230 138;
+    --color-brand-300: 252 211 77;
+    --color-brand-400: 251 191 36;
+    --color-brand-500: 245 158 11;
+    --color-brand-600: 217 119 6;
+    --color-brand-700: 180 83 9;
+    --color-brand-800: 146 64 14;
+    --color-brand-900: 120 53 15;
+  }
+
+  .theme-violet {
+    --color-brand-50:  245 243 255;
+    --color-brand-100: 237 233 254;
+    --color-brand-200: 221 214 254;
+    --color-brand-300: 196 181 253;
+    --color-brand-400: 167 139 250;
+    --color-brand-500: 139 92 246;
+    --color-brand-600: 124 58 237;
+    --color-brand-700: 109 40 217;
+    --color-brand-800: 91 33 182;
+    --color-brand-900: 76 29 149;
+  }
+
+  * { box-sizing: border-box; }
+
+  html {
+    font-family: 'Instrument Sans', system-ui, sans-serif;
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: #0f0f13;
+    color: #e8e8f0;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cabinet Grotesk', system-ui, sans-serif;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--scrollbar-color); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #4a4a58; }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-500 hover:bg-brand-600
+           text-white font-medium text-sm transition-all duration-150 active:scale-95
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-card border border-surface-border
+           hover:border-surface-muted text-sm font-medium transition-all duration-150 active:scale-95;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-white/5
+           text-sm text-gray-400 hover:text-gray-200 transition-all duration-150;
+  }
+
+  .card {
+    @apply bg-surface-card border border-surface-border rounded-xl p-4;
+  }
+
+  .input {
+    @apply w-full bg-surface-card border border-surface-border rounded-lg px-3 py-2.5
+           text-sm placeholder:text-gray-600 focus:outline-none focus:border-brand-500
+           focus:ring-1 focus:ring-brand-500/30 transition-all duration-150;
+  }
+
+  .label {
+    @apply block text-xs font-medium text-gray-400 mb-1.5 uppercase tracking-wide;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .level-ring {
+    @apply relative inline-flex items-center justify-center;
+  }
+
+  .nav-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
+           text-gray-400 hover:text-gray-100 hover:bg-white/5 transition-all duration-150 cursor-pointer;
+  }
+
+  .nav-item.active {
+    @apply text-gray-100 bg-brand-500/10 text-brand-400;
+  }
+}

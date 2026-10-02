@@ -1,0 +1,106 @@
+version: '3.9'
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Single-origin production stack. The backend serves the built React SPA AND the
+# API on one origin, which activates the server-side SEO/meta injection in
+# backend/seo.js (crawlable /c/:slug landing pages, /robots.txt, /sitemap.xml).
+#
+#   docker compose -f docker-compose.prod.yml up --build
+#   → app on http://localhost:8080  (API under /api, SPA everywhere else)
+#
+# Dev workflow is unchanged: `docker compose up` still runs the split Vite setup.
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: komunity-postgres
+    environment:
+      POSTGRES_DB: komunity
+      POSTGRES_USER: komunity
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-komunitydev}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U komunity']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: komunity-redis
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # One-shot: build the SPA into the shared web_dist volume, then exit.
+  frontend-build:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: komunity-web-build
+    command: sh -c "npm run build && rm -rf /web/* && cp -r dist/. /web/"
+    volumes:
+      - web_dist:/web
+
+  # Backend serving API + SPA (with SEO meta injection) on a single origin.
+  web:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: komunity-app
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      # Where the built SPA lives (mounted from frontend-build)
+      FRONTEND_DIST: /web
+      # Public origin — used for absolute OG/sitemap URLs and redirects
+      FRONTEND_URL: ${PUBLIC_URL:-http://localhost:8080}
+      DATABASE_URL: postgresql://komunity:${POSTGRES_PASSWORD:-komunitydev}@postgres:5432/komunity
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-change-in-prod}
+      JWT_EXPIRES_IN: 7d
+      # Auth cookie is Secure (HTTPS-only) by default in production. This stack
+      # runs on plain http://localhost:8080, so disable it here. Behind HTTPS in
+      # real production, set COOKIE_SECURE=true (or remove this line).
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_placeholder}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-whsec_placeholder}
+      MUX_TOKEN_ID: ${MUX_TOKEN_ID:-}
+      MUX_TOKEN_SECRET: ${MUX_TOKEN_SECRET:-}
+      MUX_WEBHOOK_SECRET: ${MUX_WEBHOOK_SECRET:-}
+      DAILY_API_KEY: ${DAILY_API_KEY:-}
+      DAILY_WEBHOOK_SECRET: ${DAILY_WEBHOOK_SECRET:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      S3_ENDPOINT: ${S3_ENDPOINT:-}
+      S3_REGION: ${S3_REGION:-auto}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY:-}
+      S3_SECRET_KEY: ${S3_SECRET_KEY:-}
+      S3_BUCKET_NAME: ${S3_BUCKET_NAME:-komunity-media}
+      S3_PUBLIC_URL: ${S3_PUBLIC_URL:-}
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY:-}
+      SENDGRID_FROM_EMAIL: ${SENDGRID_FROM_EMAIL:-noreply@komunity.app}
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID:-}
+      FIREBASE_CLIENT_EMAIL: ${FIREBASE_CLIENT_EMAIL:-}
+      FIREBASE_PRIVATE_KEY: ${FIREBASE_PRIVATE_KEY:-}
+    # Apply idempotent migrations, then start the server.
+    command: sh -c "node db/migrate_fixes.js || true; node server.js"
+    ports:
+      - '8080:4000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      frontend-build:
+        condition: service_completed_successfully
+    volumes:
+      - web_dist:/web:ro
+
+volumes:
+  postgres_data:
+  web_dist:

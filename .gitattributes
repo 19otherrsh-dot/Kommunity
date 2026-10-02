@@ -1,0 +1,15 @@
+# Keep LF line endings on every OS (gradlew, Dockerfiles and shell steps break with CRLF)
+* text=auto eol=lf
+
+# Windows batch scripts need CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.jar binary
+*.webp binary

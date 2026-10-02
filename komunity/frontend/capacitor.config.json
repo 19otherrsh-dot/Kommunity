@@ -1,0 +1,17 @@
+{
+  "appId": "com.komunity.app",
+  "appName": "Komunity",
+  "webDir": "dist",
+  "ios": {
+    "contentInset": "always",
+    "scheme": "Komunity"
+  },
+  "android": {
+    "allowMixedContent": false
+  },
+  "plugins": {
+    "PushNotifications": {
+      "presentationOptions": ["badge", "sound", "alert"]
+    }
+  }
+}
